@@ -127,7 +127,7 @@
                             新建
                         </button>
                         <button class="layui-btn" id="saveAlls">
-                             保存
+                            保存
                         </button>
                         <button class="layui-btn">
                             <i class="layui-icon">&#xe60a;</i>
@@ -159,7 +159,6 @@
         </div>
     </div>
 </body>
-
 <script type="text/javascript">
 var typesNum = {
     input: 0,
@@ -479,58 +478,53 @@ $(function() {
 </script>
 <!-- 控制组件 -->
 <script type="text/javascript">
-    $('#saveAlls').click(function(){
-        var datas = [];
-        $('.pages').each(function(){
-            var pj = [];
-            $(this).find('.pageDatas').each(function(){
-                var config = $(this).attr('config');
-                var c = JSON.parse(config);
-                c.w = $(this).css('width');
-                c.h = $(this).css('height');
-                c.x = $(this).css('left');
-                c.y = $(this).css('top');
-                pj.push(c);
-            });
-            var p = {
-                index:$(this).attr('index'),
-                bg:$(this).find('img').attr('src'),
-                datas:pj
-            }
-            datas.push(p);
+$('#saveAlls').click(function() {
+    var datas = [];
+    $('.pages').each(function() {
+        var pj = [];
+        $(this).find('.pageDatas').each(function() {
+            var config = $(this).attr('config');
+            var c = JSON.parse(config);
+            c.w = $(this).css('width');
+            c.h = $(this).css('height');
+            c.x = $(this).css('left');
+            c.y = $(this).css('top');
+            pj.push(c);
         });
-        $.post('__URL__/save',{data:datas},function(){
-
-        });
+        var p = {
+            index: $(this).attr('index'),
+            bg: $(this).find('img').attr('src'),
+            datas: pj
+        }
+        datas.push(p);
     });
+    $.post('__URL__/save', { data: datas }, function() {
+
+    });
+});
 </script>
-
-
-
-
-
 <script type="text/javascript">
 /*模板渲染*/
-$(function(){
+$(function() {
     var templetDatas = '{$json}';
-    if ( templetDatas ) {
-        $.each(JSON.parse(templetDatas),function(i,item){
+    if (templetDatas) {
+        $.each(JSON.parse(templetDatas), function(i, item) {
             if (i > 0) {
                 addNewPage(); // 如果没有页  则新增一页面
             }
-            var p = $('.pages[index="'+item.index+'"]');
+            var p = $('.pages[index="' + item.index + '"]');
             p.append('<img class="background" src="' + item.bg + '" />');
-            $.each(item.datas,function(k,value){
+            $.each(item.datas, function(k, value) {
                 console.log(value);
 
-                p.append('<div class="pageDatas elems '+value.type+'" style="width:'+value.w+';height:'+value.h+';top:'+value.y+';left:'+value.x+';" index="' + value.code + '" type="' + value.type + '" config=\'' + JSON.stringify(value) + '\' >' + value.code + '</div>');
+                p.append('<div class="pageDatas elems ' + value.type + '" style="width:' + value.w + ';height:' + value.h + ';top:' + value.y + ';left:' + value.x + ';" index="' + value.code + '" type="' + value.type + '" config=\'' + JSON.stringify(value) + '\' >' + value.code + '</div>');
 
 
 
                 p.find('.pageDatas').draggable({
-            containment: 'parent'
-        }).resizable();
-        contextMenu(p.find('.pageDatas[index="' +value.code+ '"]'));
+                    containment: 'parent'
+                }).resizable();
+                contextMenu(p.find('.pageDatas[index="' + value.code + '"]'));
 
 
 
@@ -541,4 +535,5 @@ $(function(){
     }
 });
 </script>
+
 </html>
