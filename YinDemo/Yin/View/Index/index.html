@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>模板</title>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-ui/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/layui/css/layui.css">
+    <link rel="stylesheet" href="__PUBLIC__/menu/css/jquery.contextMenu.css" />
+    <script type="text/javascript" src="__PUBLIC__/js/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/layui/layui.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/menu/js/jquery.contextMenu.min.js"></script>
+    <style type="text/css">
+    .title {
+        line-height: 33px;
+        background: #e6fefc;
+        border: 1px solid #c1d3de;
+        overflow: visible;
+    }
+
+    .xzxx {
+        /*padding: 11px 0 18px 0;*/
+        border: 1px solid #c1d3de;
+        overflow: hidden;
+        margin-top: 5px;
+        height: auto;
+        overflow: hidden;
+    }
+
+    .border {
+        border-right: 1px solid #c1d3de;
+    }
+
+    .yin-height {
+        /*min-height: 1000px;*/
+    }
+
+    .pages {
+        position: relative;
+        width: 595px;
+        height: 842px;
+        background: #FFF;
+        margin: auto;
+        margin-top: 30px;
+        margin-bottom: 10px;
+    }
+
+    #pagesBody {
+        background-color: #d2d2d2;
+        overflow: auto;
+        text-align: center;
+    }
+
+    .checked {
+        border: 2px solid #5FB878 !important;
+    }
+
+    .configs {
+        margin-top: 5px;
+    }
+
+    .background {
+        width: 100%;
+        height: 100%;
+    }
+
+    .mokuais {
+        margin: 30px;
+    }
+
+    .datas {
+        margin: 10px;
+        width: 80%;
+        border: 1px dashed #c2c2c2;
+    }
+
+    .pageDatas {
+        padding: 3px;
+        cursor: pointer;
+        left: 0;
+        top: 0;
+        text-decoration: underline;
+        position: absolute;
+        border: 1px dashed #c2c2c2;
+        ;
+    }
+
+    .input {
+        text-align: center;
+        line-height: 30px;
+        width: 120px;
+        height: 30px;
+    }
+
+    .text {
+        text-align: center;
+        line-height: 30px;
+        width: 120px;
+        height: 60px;
+    }
+
+    .img {
+        text-align: center;
+        line-height: 30px;
+        width: 120px;
+        height: 120px;
+    }
+
+    .qrcode {
+        text-align: center;
+        line-height: 30px;
+        width: 120px;
+        height: 120px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h2>报告信息创建</h2></div>
+    <div class="xzxx">
+        <div class="layui-row">
+            <div class="layui-col-xs2 layui-col-sm2 layui-col-md2 yin-height border">
+                <div class="mokuais">
+                    <div class="layui-btn-group">
+                        <button class="layui-btn">
+                            新建
+                        </button>
+                        <button class="layui-btn" id="saveAlls">
+                             保存
+                        </button>
+                        <button class="layui-btn">
+                            <i class="layui-icon">&#xe60a;</i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mokuais">
+                    <div class="datas layui-btn layui-btn-primary" types="input">增加单行文本域</div>
+                    <div class="datas layui-btn layui-btn-primary" types="text">增加多行文本域</div>
+                    <div class="datas layui-btn layui-btn-primary" types="img">增加图片域</div>
+                    <div class="datas layui-btn layui-btn-primary" types="qrcode">增加二维码</div>
+                </div>
+            </div>
+            <div class="layui-col-xs8 layui-col-sm8 layui-col-md8 yin-height border" id="pagesBody">
+                <div id="AllPages">
+                </div>
+                <button id="newPage" class="layui-btn" style="width: 595px;margin-bottom: 30px;"><i class="layui-icon">&#xe621;</i> 新 增 页</button>
+            </div>
+            <div class="layui-col-xs2 layui-col-sm2 layui-col-md2 yin-height">
+                <div style="margin: 20px;">
+                    模板基础信息：
+                </div>
+                <div style="margin: 20px;">
+                    <p>选中的目标：</p>
+                </div>
+                <div style="margin: 20px;" id="showCheckedConfig">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+/*模板最终文件形态*/
+
+</script>
+<script type="text/javascript">
+var typesNum = {
+    input: 0,
+    text: 0,
+    img: 0,
+    qrcode: 0,
+};
+var typesDefault = {
+    input: '{\"type\":\"input\",\"code\":\"%code%\",\"name\":\"\"}',
+    text: '{}',
+    img: '{}',
+    qrcode: '{}',
+}
+/* Σ(っ°Д°;)っ只能先复制一个可拖动元素到选择的pages下 才能进行父级内拖动了 */
+/*首先 点击事件*/
+$('.datas').on('click', function() {
+    var i = $('.checked').length;
+    var c = $(this).attr('types');
+    if (i > 0) {
+        if ($('.checked').hasClass('pages')) {
+            var page = $('.checked');
+        } else {
+            var page = $('.checked').parents('.pages');
+        }
+        var l = typesNum[c]++; //$('#pagesBody').find('.'+c).length;
+        /*方框类型*/
+        if (c == 'input') {
+            var text = 'I' + l;
+        } else if (c == 'text') {
+            var text = 'T' + l;
+        } else if (c == 'img') {
+            var text = 'P' + l;
+        } else if (c == 'qrcode') {
+            var text = 'Q' + l;
+        }
+        var json = typesDefault[c].replace(/%code%/, text);
+        /*方框类型*/
+        page.append('<div class="pageDatas elems ' + c + '" index="' + text + '" type="' + c + '" config=\'' + json + '\' >' + text + '</div>');
+        page.find('.pageDatas').draggable({
+            containment: 'parent'
+        }).resizable();
+        contextMenu(page.find('.pageDatas[index="' + text + '"]'));
+    } else {
+        msg.alert('请先在右侧选择页面');
+    }
+});
+/* Σ(っ°Д°;)っ只能先复制一个可拖动元素到选择的pages下 才能进行父级内拖动了 */
+
+
+/* (￣▽￣)~* 屏蔽右键菜单做一些坏事情 */
+function contextMenu(obj) {
+    obj.contextMenu({
+        menu: [{
+                text: "新增",
+                callback: function() {
+                    alert("新增" + obj.text());
+                }
+            },
+            {
+                text: "复制",
+                callback: function() {
+                    alert("复制" + obj.text());
+                }
+            },
+            {
+                text: "粘贴",
+                callback: function() {
+                    alert("粘贴" + obj.text());
+                }
+            },
+            {
+                text: "删除",
+                callback: function() {
+                    obj.remove();
+                }
+            },
+            {
+                text: "取消",
+                callback: function() {}
+            }
+        ]
+    });
+}
+/* (￣▽￣)~* 屏蔽右键菜单做一些坏事情 */
+</script>
+<script type="text/javascript">
+var Config = {
+    page: ['uploadpage', 'up', 'copypage', 'down', 'delete'],
+    input: ['input'],
+};
+//总设置 应该后台读取
+</script>
+<script type="text/javascript">
+var msg = {
+    alert: function(msg) {
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            layer.alert(msg, {
+                skin: 'layui-layer-molv', //样式类名
+                closeBtn: 0
+            });
+        });
+    },
+    confirm: function(json) {
+        layui.use('layer', function() {
+            var layer = layui.layer;
+            layer.confirm(json.msg, { icon: 3, title: '提示' }, function(index) {
+                json.success();
+                layer.close(index);
+            });
+        });
+    }
+};
+</script>
+<script type="text/javascript">
+//新增页
+$(function() {
+    addNewPage(); //页面加载就新增一页 主要是新增模板渲染方法
+    $('#newPage').on('click', addNewPage);
+    $('#pagesBody').on('click', '.elems', pagesBody);
+    $('#showCheckedConfig').on('click', '.moveUp', moveUp);
+    $('#showCheckedConfig').on('click', '.copypage', copypage);
+    $('#showCheckedConfig').on('click', '.moveDown', moveDown);
+    $('#showCheckedConfig').on('click', '.deletePage', deletePage);
+});
+
+function addNewPage() {
+    var index = $('.pages').length;
+    $('#AllPages').append('<div class="pages elems" type="page" index="' + index + '"></div>');
+}
+
+function pagesBody(event) {
+    var pelem = $('#pagesBody'); //总父级
+    $('#pagesBody').find('.checked').removeClass('checked');
+    $(this).addClass('checked');
+    var types = Config[$(this).attr('type')];
+    var config = $(this).attr('config');
+    $('#showCheckedConfig').html(''); //清空我们的
+    $.each(types, function(i, item) {
+        // alert($(this).attr('config'),);
+        var html = gethtml($('#' + item).html(), config);
+        $('#showCheckedConfig').append(html);
+    });
+    if ($(this).hasClass('pages')) {
+        uploadOne();
+    }
+    event.stopPropagation(); //阻止父级事件
+}
+
+/**
+ * [gethtml 模板引擎方式]
+ * @Author   ヽ(•ω•。)ノ   Mr.Solo
+ * @DateTime 2017-10-12
+ * @Function []
+ * @param    {[type]}   text    [description]
+ * @param    {[type]}   data    [description]
+ * @return   {[type]}           [description]
+ */
+function gethtml(text, data) {
+    if (data) {
+        var d = JSON.parse(data);
+    }
+    var str = '\'' + text.replace(/\s/g, " ") + '\'';
+    var reL = new RegExp("{{", "g");
+    var reR = new RegExp("}}", "g");
+    var Newstr = str.replace(reL, '\'+').replace(reR, '+\'');
+    return eval(Newstr);
+}
+
+
+function moveUp() {
+    //页面上移
+    var prev = $('.checked').prev();
+    var self = $('.checked');
+    if (prev.length > 0) {
+        var up = prev.html(),
+            down = $('.checked').html();
+        self.html(up).removeClass('checked');
+        prev.html(down).addClass('checked');
+    } else {
+        msg.alert('已经是第一页了');
+    }
+}
+
+function copypage() {
+    // 页面复制
+    addNewPage();
+    $('.pages:last').html($('.checked').html());
+}
+
+function deletePage() {
+    // 页面复制
+    msg.confirm({
+        msg: '是否确定删除？',
+        success: function() {
+            $('.checked').remove();
+            $('#showCheckedConfig').html('');
+        }
+    });
+}
+
+function moveDown() {
+    //页面下移
+    var next = $('.checked').next();
+    var self = $('.checked');
+    if (next.length > 0) {
+        var up = $('.checked').html(),
+            down = next.html();
+        self.html(down).removeClass('checked');
+        next.html(up).addClass('checked');
+    } else {
+        msg.alert('已经是最后了');
+    }
+}
+</script>
+<script type="text/javascript">
+/*上传模板*/
+function uploadOne() {
+    layui.use('upload', function() {
+        var upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#uploadDocx',
+            url: '__URL__/Uploads',
+            exts: 'png|jpeg|jpg', //上传文件类型限制结构
+            auto: false, //文件不自动上传文件
+            bindAction: '#uploadify', //上传文件按钮ID
+            done: function(res) {
+                //上传完毕回调
+                if (res.status) {
+                    //上传成功
+                    $('.checked').find('.background').remove();
+                    $('.checked').append('<img class="background" src="' + res.src + '" />'); //新增数据
+                    // alert('上传成功');
+                } else {
+                    //上传失败
+                    alert(res.data);
+                }
+            },
+        });
+    });
+}
+</script>
+<script type="text/javascript">
+/**
+ * [保存用户设置信息到该文本框内]
+ * @Author   ヽ(•ω•。)ノ   Mr.Solo
+ * @DateTime 2017-10-16
+ * @Function []
+ * @param    {[type]}   ){                         var d [description]
+ * @return   {[type]}           [description]
+ */
+$(document).on('click', '.saveDatas', function() {
+    var d = JSON.parse($('.checked').attr('config'));
+    var f = $(this).parents('.form');
+    $.each(d, function(key, value) {
+        var v = f.find('.' + key).val();
+        if (v) {
+            if (key == 'code') {
+                $('.checked').text(v);
+            }
+            d[key] = v;
+        }
+    });
+    $('.checked').attr('config', JSON.stringify(d));
+});
+</script>
+<script type="text/javascript">
+/*页面渲染*/
+$(function() {
+    $('.yin-height').css('height', ($(window).height() - 42));
+});
+</script>
+<!-- 控制组件 -->
+<script type="text/html" id="uploadpage">
+    <div class="configs">
+        <button type="button" class="layui-btn" id="uploadDocx">
+            <i class="layui-icon">&#xe67c;</i>选择图片
+        </button>
+        <br />
+        <button type="button" class="layui-btn layui-btn-primary" id="uploadify"><i class="layui-icon">&#xe654;</i>确认上传</button>
+    </div>
+</script>
+<script type="text/html" id="up">
+    <div class="configs">
+        <button type="button" class="layui-btn layui-btn-primary moveUp"><i class="layui-icon">&#xe619;</i>向上移动</button>
+    </div>
+</script>
+<script type="text/html" id="copypage">
+    <div class="configs">
+        <button type="button" class="layui-btn layui-btn-primary copypage"><i class="layui-icon">&#xe630;</i>复制该页</button>
+    </div>
+</script>
+<script type="text/html" id="down">
+    <div class="configs">
+        <button type="button" class="layui-btn layui-btn-primary moveDown"><i class="layui-icon">&#xe61a;</i>向下移动</button>
+    </div>
+</script>
+<script type="text/html" id="delete">
+    <div class="configs">
+        <button type="button" class="layui-btn layui-btn layui-btn-danger deletePage"><i class="layui-icon">&#xe640;</i>删 除</button>
+    </div>
+</script>
+<script type="text/html" id="input">
+    <div class="form">
+        <div class="configs">
+            编号：
+            <input type="" name="code" class="code" value="{{d.code}}">
+        </div>
+        <div class="configs">
+            名称：
+            <input type="" name="name" class="name" value="{{d.name}}">
+        </div>
+        <div class="configs">
+            <button class="layui-btn saveDatas" type="input">保 存</button>
+        </div>
+    </div>
+</script>
+<!-- 控制组件 -->
+<script type="text/javascript">
+    $('#saveAlls').click(function(){
+        var datas = [];
+        $('.pages').each(function(){
+            var pj = [];
+            $(this).find('.pageDatas').each(function(){
+                var config = $(this).attr('config');
+                var c = JSON.parse(config);
+                c.w = $(this).css('width');
+                c.h = $(this).css('height');
+                c.x = $(this).css('left');
+                c.y = $(this).css('top');
+                pj.push(c);
+            });
+            var p = {
+                index:$(this).attr('index'),
+                bg:$(this).find('img').attr('src'),
+                datas:pj
+            }
+            datas.push(p);
+        });
+        $.post('__URL__/save',{data:datas},function(){
+            
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>模板</title>
+    <link rel="stylesheet" type="text/css" href="/Public/layui/css/layui.css">
+    <script type="text/javascript" src="/Public/js/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="/Public/layui/layui.js"></script>
+    <style type="text/css">
+    	.yin-rows{
+    		height: 50px;
+    		line-height: 50px;
+    	}
+    	.yin-rows p{
+    		font-size: 1rem;
+    	}
+    </style>
+</head>
+
+<body style="">
+    <div style="width: 60%;margin:auto;">
+        <div class="layui-row" style="margin-top: 100px;">
+            <div class="layui-col-xs2 layui-col-sm2 layui-col-md2 yin-rows" style="text-align: center;">
+                <p class="title">模板上传：</p>
+            </div>
+            <div class="layui-col-xs10 layui-col-sm10 layui-col-md10 yin-rows">
+                <button type="button" class="layui-btn" id="uploadDocx">
+                    <i class="layui-icon">&#xe67c;</i>选择.docx文件
+                </button>
+                <button type="button" class="layui-btn layui-btn-primary" id="uploadify"><i class="layui-icon">&#xe654;</i>确认上传</button>
+                <input type="hidden" name="fileId" value="" id="fileId">
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+/*上传模板*/
+layui.use('upload', function() {
+    var upload = layui.upload;
+    var uploadInst = upload.render({
+        elem: '#uploadDocx',
+        url: '__URL__/Uploads',
+        exts: 'docx', //上传文件类型限制结构
+        auto: false, //文件不自动上传文件
+        bindAction: '#uploadify', //上传文件按钮ID
+        done: function(res) {
+            //上传完毕回调
+            if (res.status) {
+            	//上传成功
+            	window.location.href="__URL__/step2/fileId/"+res.data;
+            	// $('#fileId').val(res.data);
+            	// alert('上传成功');
+            }else{
+            	//上传失败
+            	alert(res.data);
+            }
+        },
+    });
+});
+</script>
+
+</html>
